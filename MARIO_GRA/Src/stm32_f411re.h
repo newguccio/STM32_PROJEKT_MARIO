@@ -1,69 +1,139 @@
 #ifndef stm32_registers
 #define stm32_registers
-
+// #include<stdint.h> trzeba czy nie? u zioma trzeba z poradnika
 //offset 0x30
 typedef struct{
 
-	uint32_t gpio_A : 1;
-	uint32_t gpio_B : 1;
-	uint32_t gpio_C : 1;
-	uint32_t gpio_D : 1;
-	uint32_t gpio_E : 1;
-	uint32_t reserved1 : 4;
-	uint32_t gpio_H : 1;
-	uint32_t reserved2 : 8;
-	uint32_t CRC : 2;
-	uint32_t reserved3 : 16;
-	uint32_t DMA1 : 2;
-	uint32_t DMA2 : 2;
-	uint32_t reserved4 : 18;
+	volatile 	uint32_t gpio_A : 1;
+	volatile 	uint32_t gpio_B : 1;
+	volatile	uint32_t gpio_C : 1;
+	volatile	uint32_t gpio_D : 1;
+	volatile	uint32_t gpio_E : 1;
+	volatile	uint32_t reserved1 : 2;
+	volatile	uint32_t gpio_H : 1;
+	volatile	uint32_t reserved2 : 4;
+	volatile	uint32_t CRC : 1;
+	volatile	uint32_t reserved3 : 8;
+	volatile	uint32_t DMA1 : 1;
+	volatile	uint32_t DMA2 : 1;
+	volatile	uint32_t reserved4 : 9;
 
 }RCC_AHB1ENR_t;
 
+
+//apb1 enable register
 typedef struct{
 
-
-uint32_t tim2 :1;
-uint32_t tim3 :1;
-uint32_t tim4 :1;
-uint32_t tim5 :1;
-uint32_t reserved1 :7;
-uint32_t wwdg :1;
-uint32_t reserved2 :2;
-uint32_t spi2 :1;
-uint32_t spi3 :1;
-uint32_t reserved3 :1;
-uint32_t usart2 :1;
-uint32_t reserved4 :3;
-uint32_t i2c_1 :1;
-uint32_t i2c_2 :1;
-uint32_t i2c_3 :1;
-uint32_t reserved5 :4;
-uint32_t pwr :1;
-uint32_t reserved6 :3;
+	volatile uint32_t tim2 :1;
+	volatile uint32_t tim3 :1;
+	volatile uint32_t tim4 :1;
+	volatile uint32_t tim5 :1;
+	volatile uint32_t reserved1 :7;
+	volatile uint32_t wwdg :1;
+	volatile uint32_t reserved2 :2;
+	volatile uint32_t spi2en :1;
+	volatile uint32_t spi3en :1;
+	volatile uint32_t reserved3 :1;
+	volatile uint32_t usart2 :1;
+	volatile uint32_t reserved4 :3;
+	volatile uint32_t i2c_1 :1;
+	volatile uint32_t i2c_2 :1;
+	volatile uint32_t i2c_3 :1;
+	volatile uint32_t reserved5 :4;
+	volatile uint32_t pwr :1;
+	volatile uint32_t reserved6 :3;
 
 }RCC_APB1ENR_t;
 
-
-
+//apb2 enable register
 typedef struct{
 
-	uint32_t moder;     // offsety: 0x00
-	uint32_t otyper;	//			0x04
-	uint32_t ospeedr;	//			0x08
-	uint32_t pupdr;		//			0x0C
-	uint32_t idr;		//			0x10
-	uint32_t odr;		//			0x14
-	uint32_t bsrrL;		//			0x18
-	uint32_t lckr;		//			0x1C
-	uint32_t afrl;		//			0x20
-	uint32_t AFRh;		//			0x24
+	volatile uint32_t tim1 :1;
+	volatile uint32_t reserved1 :3;
+	volatile uint32_t usart1:1;
+	volatile uint32_t usart6:1;
+	volatile uint32_t reserved2 :2;
+	volatile uint32_t adc1:1;
+	volatile uint32_t reserved3 :2;
+	volatile uint32_t sdioen:1;
+	volatile uint32_t spi1en:1;
+	volatile uint32_t spi4en:1;
+	volatile uint32_t syscfG:1;
+	volatile uint32_t reserved4 :1;
+	volatile uint32_t tim9 :1;
+	volatile uint32_t tim10 :1;
+	volatile uint32_t tim11 :1;
+	volatile uint32_t reserved5 :1;
+	volatile uint32_t spi5en :1;
+	volatile uint32_t reserved6 :11;
+
+}RCC_APB2ENR_t;
+
+//ogolnie caly blok pamieci dla RCC a te na gorze to bitmapy wybranych szyn ktore potem mozna wpisac tutaj jaki definicje struktury odpowiedniej, dzieki temu mozemy miec w jednej zmiennej
+//bardzo konkretny dostep do wybranych bitów/pinow/itpitd
+typedef struct{
+		volatile uint32_t CR;            // 0x00 -offsety co 4 jak w gpio_typedef
+	    volatile uint32_t PLLCFGR;       // 0x04
+	    volatile uint32_t CFGR;          // 0x08
+	    volatile uint32_t CIR;           // 0x0C
+	    volatile uint32_t AHB1RSTR;      // 0x10
+	    volatile uint32_t AHB2RSTR;      // 0x14
+	    volatile uint32_t reserved1;     // 0x18
+		volatile uint32_t reserved2; 	 // 0x1C
+		volatile uint32_t apb1rstr;		//0x20
+		volatile uint32_t apb2rstr;		//0x24
+		volatile uint32_t reserved3;     //0x28
+		volatile uint32_t reserved4;	//0x2C
+		volatile RCC_AHB1ENR_t ahb1enr;     // 0x30
+		volatile uint32_t ahb2enr;		//0x34
+		volatile uint32_t reserved5;     //0x38
+		volatile uint32_t reserved6;	//0x3C
+		volatile RCC_APB1ENR_t apb1enr; 		//0x40
+		volatile RCC_APB2ENR_t apb2enr;		//0x44
+		volatile uint32_t reserved7;     //0x48
+		volatile uint32_t reserved8;	//0x4C
+		volatile uint32_t ahb1_Lenr; 		//0x50
+		volatile uint32_t ahb2_Lenr;		//0x54
+		volatile uint32_t reserved9;   		  //0x58
+		volatile uint32_t reserved10;		//0x5C
+		volatile uint32_t apb1_Lenr; 		//0x60
+		volatile uint32_t apb2_Lenr;		//0x64
+		volatile uint32_t reserved11;    	 //0x68
+		volatile uint32_t reserved12;		//0x6C
+		volatile uint32_t bdcr;     		//0x70
+		volatile uint32_t csr;				//0x74
+		volatile uint32_t reserved13;    	//0x78
+		volatile uint32_t reserved14;		//0x7C
+		volatile uint32_t sscgr;     		//0x80
+		volatile uint32_t cfgr;				//0x84
+		volatile uint32_t dckcfgr;			//0x88
+
+
+}RCC_TypeDef_t;
 
 
 
 
 
 
+
+
+
+
+
+// moge tak zrobic,sa co 4 bajty i zgadza sie w takiej kolejnosci z offsetem w dokumentacji
+typedef struct{
+
+	volatile	uint32_t moder;     // offsety: 0x00
+	volatile	uint32_t otyper;	//			0x04
+	volatile	uint32_t ospeedr;	//			0x08
+	volatile	uint32_t pupdr;		//			0x0C
+	volatile	uint32_t idr;		//			0x10
+	volatile	uint32_t odr;		//			0x14
+	volatile	uint32_t bsrr;		//			0x18
+	volatile	uint32_t lckr;		//			0x1C
+	volatile	uint32_t afl_L;		//			0x20
+	volatile	uint32_t afl_H;		//			0x24
 
 }GPIO_RegDef_t;
 
@@ -74,7 +144,7 @@ typedef struct{
 
 
 
-
+// te na gorze jest zamiast tego
 /*
 typedef struct{
 
