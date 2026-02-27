@@ -72,6 +72,7 @@ typedef struct{
 //ogolnie caly blok pamieci dla RCC a te na gorze to bitmapy wybranych szyn ktore potem mozna wpisac tutaj jaki definicje struktury odpowiedniej, dzieki temu mozemy miec w jednej zmiennej
 //bardzo konkretny dostep do wybranych bitów/pinow/itpitd
 typedef struct{
+
 		volatile uint32_t CR;            // 0x00 -offsety co 4 jak w gpio_typedef
 	    volatile uint32_t PLLCFGR;       // 0x04
 	    volatile uint32_t CFGR;          // 0x08
@@ -113,14 +114,6 @@ typedef struct{
 
 
 
-
-
-
-
-
-
-
-
 // moge tak zrobic,sa co 4 bajty i zgadza sie w takiej kolejnosci z offsetem w dokumentacji
 typedef struct{
 
@@ -138,13 +131,11 @@ typedef struct{
 }GPIO_RegDef_t;
 
 
+// definiujemy RCC zeby bylo do maina (poprzez typecasting do wskaznika), a adresem jest poczatek calego modulu RCC, wiec mozemy strzalkowac do jego wnetrza a potem uzywac . jako co konkretnie zmienamy
+#define RCC ((RCC_TypeDef_t*)0x40023800U) //U zeby bylo wiadomoze liczba bez znaku
 
 
-
-
-
-
-// te na gorze jest zamiast tego
+// te na gorze GPIO_RegDef_t jest zamiast tego
 /*
 typedef struct{
 
