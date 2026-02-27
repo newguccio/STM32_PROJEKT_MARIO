@@ -21,6 +21,8 @@
 int main(void)
 {
     /* Loop forever */
-	printf("pozdrawiam pupa");
+
+	printf("pozdrawiam pupa\n");
+
 	for(;;);
 }
