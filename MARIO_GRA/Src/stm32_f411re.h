@@ -109,7 +109,6 @@ typedef struct{
 		volatile uint32_t cfgr;				//0x84
 		volatile uint32_t dckcfgr;			//0x88
 
-
 }RCC_TypeDef_t;
 
 
@@ -158,13 +157,14 @@ typedef struct{
 
 // definiujemy RCC zeby bylo do maina (poprzez typecasting do wskaznika), a adresem jest poczatek calego modulu RCC, wiec mozemy strzalkowac do jego wnetrza a potem uzywac . jako co konkretnie zmienamy
 #define RCC ((RCC_TypeDef_t*)0x40023800U) //U zeby bylo wiadomoze liczba bez znaku
+#define ADC1 ((ADC_TypeDef_t*)0x40012000U)
 
-#define GPIO_A ((GPIO_RegDef_t*)0x4002 0000)
-#define GPIO_B ((GPIO_RegDef_t*)0x4002 0400)
-#define GPIO_C ((GPIO_RegDef_t*)0x4002 0800)
-#define GPIO_D ((GPIO_RegDef_t*)0x4002 0C00)
-#define GPIO_E ((GPIO_RegDef_t*)0x4002 1000)
-#define GPIO_H ((GPIO_RegDef_t*)0x4002 1C00)
+#define GPIO_A ((GPIO_RegDef_t*)0x40020000)
+#define GPIO_B ((GPIO_RegDef_t*)0x40020400)
+#define GPIO_C ((GPIO_RegDef_t*)0x4002800)
+#define GPIO_D ((GPIO_RegDef_t*)0x40020C00)
+#define GPIO_E ((GPIO_RegDef_t*)0x40021000)
+#define GPIO_H ((GPIO_RegDef_t*)0x40021C00)
 
 
 
