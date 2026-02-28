@@ -130,9 +130,43 @@ typedef struct{
 
 }GPIO_RegDef_t;
 
+typedef struct{
+
+	volatile uint32_t SR;            // 0x00 -offsety co 4 jak w gpio_typedef
+    volatile uint32_t ADC_CR1;       // 0x04
+    volatile uint32_t ADC_CR2;        // 0x08
+    volatile uint32_t adc_smpr1;      // 0x0C
+    volatile uint32_t adc_smpr2;     // 0x10
+    volatile uint32_t jofr1;      	// 0x14
+    volatile uint32_t jofr2;     	// 0x18
+	volatile uint32_t jofr3; 		 // 0x1C
+	volatile uint32_t jofr4;		//0x20
+	volatile uint32_t htr;			//0x24
+	volatile uint32_t Ltr;    		 //0x28
+	volatile uint32_t sqr1;			//0x2C
+	volatile uint32_t sqr2;   	 	 // 0x30
+	volatile uint32_t sqr3;			//0x34
+	volatile uint32_t jsqr;    		 //0x38
+	volatile uint32_t jdr1;			//0x3C
+	volatile uint32_t jdr2; 		//0x40
+	volatile uint32_t jdr3;			//0x44
+	volatile uint32_t jdr4;   		  //0x48
+	volatile uint32_t dr;			//0x4C
+
+}ADC_TypeDef_t;
+
 
 // definiujemy RCC zeby bylo do maina (poprzez typecasting do wskaznika), a adresem jest poczatek calego modulu RCC, wiec mozemy strzalkowac do jego wnetrza a potem uzywac . jako co konkretnie zmienamy
 #define RCC ((RCC_TypeDef_t*)0x40023800U) //U zeby bylo wiadomoze liczba bez znaku
+
+#define GPIO_A ((GPIO_RegDef_t*)0x4002 0000)
+#define GPIO_B ((GPIO_RegDef_t*)0x4002 0400)
+#define GPIO_C ((GPIO_RegDef_t*)0x4002 0800)
+#define GPIO_D ((GPIO_RegDef_t*)0x4002 0C00)
+#define GPIO_E ((GPIO_RegDef_t*)0x4002 1000)
+#define GPIO_H ((GPIO_RegDef_t*)0x4002 1C00)
+
+
 
 
 // te na gorze GPIO_RegDef_t jest zamiast tego
