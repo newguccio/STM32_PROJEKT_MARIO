@@ -19,11 +19,27 @@
 #include  <stdint.h>
 #include  <stdio.h>
 #include "stm32_f411re.h"
+
+void ADC_ON(void);
+uint32_t ADC_Control_Read(void);
+
 int main(void)
+
 {
-    /* Loop forever */
 
-	printf("pozdrawiam pupa\n");
+	 ADC_ON();
 
-	for(;;);
+	 while(1){
+
+		uint32_t joystick_position = ADC_Control_Read();
+
+		printf("pozycja z jpysticka: %ld\n", joystick_position);
+
+		joystick_position = 0;
+
+		for(volatile int i = 0; i < 500000; i++);
+
+	 }
+
+
 }

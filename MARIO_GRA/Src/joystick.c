@@ -12,7 +12,7 @@
 void ADC_ON(void){
 
 	RCC->apb2enr.adc1 |= 1;  //odpalenie szyny apb2 bo tam jest adc1
-	GPIO_A->moder |= (3<<0); //ustawienie PA0 na tryb analogowy
+	GPIO_A->moder |= (3<<0) | (3<<2); //ustawienie PA0 i PA1 na tryb analogowy
 	ADC1->ADC_CR2 |= (1<<0); //ustawienie ADON na 1
 	ADC1->adc_smpr2 |= (7<<0); //ustawienie probkowania na max cykle
 }
@@ -21,7 +21,7 @@ void ADC_ON(void){
 
 uint32_t ADC_Control_Read(void){
 
-ADC1->ADC_CR2 |=(1<<30); // SWSTART, 1 sratuje konwersje
+ADC1->ADC_CR2 |=(1<<30); // SWSTART, 1 startuje konwersje
 
 //spowolnienie procesora: jesli nie ma 1 na eoc czekaj, bo 1 oznacza koniec, czyli pozycja zczytana
 while ( !(ADC1->SR & (1 << 1) ) ){
