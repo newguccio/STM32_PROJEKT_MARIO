@@ -21,7 +21,7 @@
 #include "stm32_f411re.h"
 
 void ADC_ON(void);
-uint32_t ADC_Control_Read(void);
+uint32_t ADC_Control_Read(uint32_t channel);
 
 int main(void)
 
@@ -30,12 +30,11 @@ int main(void)
 	 ADC_ON();
 
 	 while(1){
+		uint32_t position_x = ADC_Control_Read(0); //nie trzeba czyscic bo samo odczytanie czysci
+		uint32_t position_y = ADC_Control_Read(1); //nie trzeba czyscic bo samo odczytanie czysci
 
-		uint32_t joystick_position = ADC_Control_Read();
+		printf("pozycja z jpysticka: %ld %ld \n", position_x, position_y);
 
-		printf("pozycja z jpysticka: %ld\n", joystick_position);
-
-		joystick_position = 0;
 
 		for(volatile int i = 0; i < 500000; i++);
 
