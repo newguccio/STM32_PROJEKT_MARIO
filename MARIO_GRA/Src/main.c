@@ -29,11 +29,17 @@ int main(void)
 
 	 ADC_ON();
 
+	 uint8_t button_pressed;
+
 	 while(1){
 		uint32_t position_x = ADC_Control_Read(0); //nie trzeba czyscic bo samo odczytanie czysci
 		uint32_t position_y = ADC_Control_Read(1); //nie trzeba czyscic bo samo odczytanie czysci
 
-		printf("pozycja z jpysticka: %ld %ld \n", position_x, position_y);
+
+		button_pressed = ((GPIO_A->idr>>4) & 0x1) ;
+
+
+		printf("pozycja z jpysticka: %ld %ld %d \n", position_x, position_y, button_pressed);
 
 
 		for(volatile int i = 0; i < 500000; i++);
