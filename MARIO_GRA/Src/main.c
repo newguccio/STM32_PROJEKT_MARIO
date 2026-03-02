@@ -35,7 +35,6 @@ int main(void)
 		uint32_t position_x = ADC_Control_Read(0); //nie trzeba czyscic bo samo odczytanie czysci
 		uint32_t position_y = ADC_Control_Read(1); //nie trzeba czyscic bo samo odczytanie czysci
 
-
 		button_pressed = ((GPIO_A->idr>>4) & 0x1) ;
 
 
@@ -48,3 +47,4 @@ int main(void)
 
 
 }
+

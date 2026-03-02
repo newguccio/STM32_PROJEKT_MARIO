@@ -16,7 +16,7 @@ void ADC_ON(void){
 	GPIO_A->moder |= (3<<0) | (3<<2);//ustawienie PA0 i PA1 na tryb analogowy
 	GPIO_A->moder &= ~(3<<8);
 	ADC1->ADC_CR2 |= (1<<0); //ustawienie ADON na 1
-	ADC1->adc_smpr2 |= (7<<0) | (7<<3); //ustawienie probkowania na max cykle dla pa0 i pa1
+	ADC1->adc_smpr2 |= (7<<0) | (7<<3); //ustawienie probkowania na max cykle dla pa0 i pa1 - bez miany tego powinno dzialac
 	GPIO_A->pupdr |= (1<<8);
 }
 
@@ -25,14 +25,14 @@ void ADC_ON(void){
 uint32_t ADC_Control_Read(uint32_t channel){
 
 //	ADC1->sqr3 &= ~0x3;	moge dac to bo czyszcze tylko dwie pierwsze pozycje 0x011 ale to zly nawyk
-ADC1->sqr3 &= ~0x1F; //czyszcisz poprzedni stan przed nowym bo nie da sie zmienic 1 na 0
+ADC1->sqr3 &= ~0x1F; //czyszcisz poprzedni stan przed nowym bo nie da sie zmienic 1 na 0- bez tego nie wie czy lewo/prawo czy szum
 
 ADC1->sqr3 |= channel; //wybor kanalu ktory pierwszy zostanie obliczony w przypadku z drazkiem pozycji X czy Y
 
 
-ADC1->ADC_CR2 |=(1<<30); // SWSTART, 1 startuje konwersje
+ADC1->ADC_CR2 |=(1<<30); // SWSTART, 1 startuje konwersje - bez tego nie ruszy
 
-//spowolnienie procesora: jesli nie ma 1 na eoc czekaj, bo 1 oznacza koniec, czyli pozycja zczytana
+//spowolnienie procesora: jesli nie ma 1 na eoc czekaj, bo 1 oznacza koniec, czyli pozycja zczytana- bez tego odpierdala
 while ( !(ADC1->SR & (1 << 1) ) ){
 
 }

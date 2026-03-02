@@ -112,7 +112,6 @@ typedef struct{
 }RCC_TypeDef_t;
 
 
-
 // moge tak zrobic,sa co 4 bajty i zgadza sie w takiej kolejnosci z offsetem w dokumentacji
 typedef struct{
 
