@@ -1,6 +1,18 @@
 #ifndef stm32_registers
 #define stm32_registers
-// #include<stdint.h> trzeba czy nie? u zioma trzeba z poradnika
+#include<stdint.h> // trzeba czy nie? u zioma trzeba z poradnika
+
+//generic macros
+#define ENABLE				1
+#define DISABLE 			0
+#define	SET 				ENABLE
+#define RESET				DISABLE
+#define	GPIO_Pin_Set 		SET
+#define	GPIO_Pin_Reset		RESET
+
+
+
+
 //offset 0x30
 typedef struct{
 

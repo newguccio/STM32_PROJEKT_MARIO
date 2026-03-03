@@ -30,21 +30,23 @@ typedef struct{
 }GPIO_Handle_t;
 
 // to sa api
-void GPIO_Init(void); //ustawienie pinu
-void GPIO_DeInit(void); //reset pinu
-void GPIO_PeripheralClockControl(void); //clock
-void GPIO_ReadFromInputPin(void);
-void GPIO_ReadFromInputPort(void);
-void GPIO_WriteToOutputPin(void);
-void GPIO_WrtieToOutputPort(void);
-void GPIO_ToggleOutputPin(void);
-void GPIO_IRQConfig(void);
-void GPIO_IRQHandling(void);
+void GPIO_PeripheralClockControl(GPIO_RegDef_t *pGPIOX, uint8_t EnableOrDisable); //clock
 
 
 
+void GPIO_Init(GPIO_Handle_t *pGPIOHandle); //ustawienie/inicjalizacja pinu zeby zaczal dzialac
+void GPIO_DeInit(GPIO_RegDef_t *pGPIOX); //reset pinu co byl init, poprzez wejscie do rcc pheripheral reset register
+
+uint8_t GPIO_ReadFromInputPin(GPIO_RegDef_t *pGPIOX, uint8_t PinNumber);
+uint16_t GPIO_ReadFromInputPort(GPIO_RegDef_t *pGPIOX);
+void GPIO_WriteToOutputPin(GPIO_RegDef_t *pGPIOX, uint8_t PinNumber, uint8_t value);
+void GPIO_WrtieToOutputPort(GPIO_RegDef_t *pGPIOX, uint16_t value);
+void GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOX, uint8_t PinNumber);
 
 
+
+void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t IRQPriority, uint8_t EnodDi); //enodi-enable or disable
+void GPIO_IRQHandling(uint8_t PinNumber);
 
 
 
