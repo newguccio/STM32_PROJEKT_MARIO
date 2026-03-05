@@ -165,17 +165,31 @@ typedef struct{
 
 }ADC_TypeDef_t;
 
+typedef struct{
+
+	volatile	uint32_t IMR;    	// offsety: 0x00
+	volatile	uint32_t EMR;		//			0x04
+	volatile	uint32_t RTST;		//			0x08
+	volatile	uint32_t FTSR;		//			0x0C
+	volatile	uint32_t SWIER;		//			0x10
+	volatile	uint32_t PR;		//			0x14
+
+}EXTI_RegDef_t;
+
 
 // definiujemy RCC zeby bylo do maina (poprzez typecasting do wskaznika), a adresem jest poczatek calego modulu RCC, wiec mozemy strzalkowac do jego wnetrza a potem uzywac . jako co konkretnie zmienamy
-#define RCC ((RCC_TypeDef_t*)0x40023800U) //U zeby bylo wiadomoze liczba bez znaku
-#define ADC1 ((ADC_TypeDef_t*)0x40012000U)
+#define RCC 			((RCC_TypeDef_t*)0x40023800U) //U zeby bylo wiadomoze liczba bez znaku
 
-#define GPIO_A ((GPIO_RegDef_t*)0x40020000)
-#define GPIO_B ((GPIO_RegDef_t*)0x40020400)
-#define GPIO_C ((GPIO_RegDef_t*)0x4002800)
-#define GPIO_D ((GPIO_RegDef_t*)0x40020C00)
-#define GPIO_E ((GPIO_RegDef_t*)0x40021000)
-#define GPIO_H ((GPIO_RegDef_t*)0x40021C00)
+#define ADC1 			((ADC_TypeDef_t*)0x40012000U) // nie moga byc spacje
+
+#define EXTI			((EXTI_TypeDef_t*)0x40013C00) // ten adres rzutuje bezposrednio na strukture EXTI i stad wiemy ze jak robimy cos z exti to ma prawidlowy adres
+
+#define GPIO_A 			((GPIO_RegDef_t*)0x40020000)
+#define GPIO_B 			((GPIO_RegDef_t*)0x40020400)
+#define GPIO_C 			((GPIO_RegDef_t*)0x4002800)
+#define GPIO_D 			((GPIO_RegDef_t*)0x40020C00)
+#define GPIO_E 			((GPIO_RegDef_t*)0x40021000)
+#define GPIO_H 			((GPIO_RegDef_t*)0x40021C00)
 
 
 

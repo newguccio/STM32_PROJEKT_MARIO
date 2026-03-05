@@ -8,6 +8,19 @@
 #ifndef ADC_DRIVER_API_H_
 #define ADC_DRIVER_API_H_
 
+#include"stm32_f411re.h"
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #endif /* ADC_DRIVER_API_H_ */

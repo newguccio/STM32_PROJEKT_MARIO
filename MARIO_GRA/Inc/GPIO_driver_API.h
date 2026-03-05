@@ -31,11 +31,22 @@ typedef struct{
 }GPIO_Handle_t;
 
 
-//GPIO Pin function
+//GPIO Pin possible modes
+
+//non-interrupt part
 #define GPIO_Mode_Input 		0
 #define GPIO_Mode_Output 		1
 #define GPIO_Mode_Alternate 	2
 #define GPIO_Mode_Analog 		3
+//interrupt part
+#define GPIO_MODE_IT_FT			4	// falling edge direction
+#define GPIO_MODE_IT_RT			5	// rising edge direction
+#define GPIO_MODE_IT_RFT		6	// rising/falling edge direction
+
+
+
+
+
 
 //GPIO pull-up/pull-down values
 #define None_pupd 				0
@@ -124,14 +135,32 @@ void GPIO_PeripheralClockControl(GPIO_RegDef_t *pGPIOX, uint8_t EnableOrDisable)
 //ustawienie/inicjalizacja pinu zeby zaczal dzialac
 void GPIO_Init(GPIO_Handle_t *pGPIOHandle){
 	uint32_t temp = 0;
-
+	//to jest non interrupt mode
 	if(pGPIOHandle->GPIO_PinConfig.GPIO_PinMode <= GPIO_Mode_Analog){
 		temp = pGPIOHandle->GPIO_PinConfig.GPIO_PinMode << (2 *pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //bierze pin ktory wybralismy i ustawia mu moder
 		pGPIOHandle->pGPIO_X_BaseAddr->moder &= ~(0x11 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //cleac przed ustawieniem
 		pGPIOHandle->pGPIO_X_BaseAddr->moder |= temp;
 	}
+	//interrupt mode
 	else{
-			//narazie nie
+		if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_IT_FT){
+
+		}else if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_IT_RT){
+
+		}else if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_IT_RFT){
+
+		}
+
+
+
+
+
+
+
+
+
+
+
 	}
 	temp = 0; // zerowanie po poprzedniej czynnosci
 		temp = pGPIOHandle->GPIO_PinConfig.GPIO_PinSpeed << (2 *pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //bierze pin ktory wybralismy i ustawia speed
@@ -193,19 +222,43 @@ void GPIO_DeInit(GPIO_RegDef_t *pGPIOX){
 		}
 
 }
+//konkretny Pin
+uint8_t GPIO_ReadFromInputPin(GPIO_RegDef_t *pGPIOX, uint8_t PinNumber){
 
-uint8_t GPIO_ReadFromInputPin(GPIO_RegDef_t *pGPIOX, uint8_t PinNumber);
-uint16_t GPIO_ReadFromInputPort(GPIO_RegDef_t *pGPIOX);
+	uint8_t value;
+	value = (uint8_t) (pGPIOX->idr>>PinNumber) & (0x1); //przesuwam wartosc inputa i extractuje go do nowej zmiennej ktora returnuje
+
+	return value;
+}
+
+//caly port
+uint16_t GPIO_ReadFromInputPort(GPIO_RegDef_t *pGPIOX){
+
+	uint16_t value;
+	value = (uint16_t) pGPIOX->idr;//przesuwam wartosc inputa i extractuje go do nowej zmiennej ktora returnuje
+
+	return value;
+
+}
+
+void GPIO_WriteToOutputPin(GPIO_RegDef_t *pGPIOX, uint8_t PinNumber, uint8_t value){
+	if(value == 1){							//jesli chcemy miec wlaczone to daje 3v3 na wybrany PinNumber
+		pGPIOX->odr |=	(1 << PinNumber);
+	}else {
+
+		pGPIOX->odr &= ~(1 <<PinNumber);
+	}
+}
+
+void GPIO_WrtieToOutputPort(GPIO_RegDef_t *pGPIOX, uint16_t value){
+	pGPIOX->odr = value; //uzytkownik wprowadza maske i bezposrednio wrzuca na odr dzieki czemu moze zapalic jakie chce diody a nie tylko konkretne
+}
 
 
-
-
-
-
-
-void GPIO_WriteToOutputPin(GPIO_RegDef_t *pGPIOX, uint8_t PinNumber, uint8_t value);
-void GPIO_WrtieToOutputPort(GPIO_RegDef_t *pGPIOX, uint16_t value);
-void GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOX, uint8_t PinNumber);
+//raczej rzadko uzywana funkcja bardziej jak chcemy ustawic jakis pin na szybko ktory ma podpieta diode i wtedy mozemy sobie cos sprawdzac
+void GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOX, uint8_t PinNumber){
+	pGPIOX->odr ^= (1 << PinNumber); // xor czyli wpisuje zawsze przeciwny stan
+}
 
 
 
