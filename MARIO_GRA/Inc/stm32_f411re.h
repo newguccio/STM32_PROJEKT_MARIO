@@ -213,6 +213,13 @@ typedef struct{
 #define GPIO_E 			((GPIO_RegDef_t*)0x40021000)
 #define GPIO_H 			((GPIO_RegDef_t*)0x40021C00)
 
+#define IRQ_NO_EXTI1			6
+#define IRQ_NO_EXTI1			7
+#define IRQ_NO_EXTI2			8
+#define IRQ_NO_EXTI3			9
+#define IRQ_NO_EXTI4			10
+#define IRQ_NO_EXTI5_9			23
+#define IRQ_NO_EXTI010_15		40
 
 
 

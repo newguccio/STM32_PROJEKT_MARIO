@@ -258,18 +258,46 @@ void GPIO_WriteToOutputPin(GPIO_RegDef_t *pGPIOX, uint8_t PinNumber, uint8_t val
 }
 
 void GPIO_WrtieToOutputPort(GPIO_RegDef_t *pGPIOX, uint16_t value){
-	pGPIOX->odr = value; //uzytkownik wprowadza maske i bezposrednio wrzuca na odr dzieki czemu moze zapalic jakie chce diody a nie tylko konkretne
+	pGPIOX->odr = value; 										//uzytkownik wprowadza maske i bezposrednio wrzuca na odr dzieki czemu moze zapalic jakie chce diody a nie tylko konkretne
 }
 
 
 //raczej rzadko uzywana funkcja bardziej jak chcemy ustawic jakis pin na szybko ktory ma podpieta diode i wtedy mozemy sobie cos sprawdzac
 void GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOX, uint8_t PinNumber){
-	pGPIOX->odr ^= (1 << PinNumber); // xor czyli wpisuje zawsze przeciwny stan
+	pGPIOX->odr ^= (1 << PinNumber); 									// xor czyli wpisuje zawsze przeciwny stan
 }
 
 
 
-void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t IRQPriority, uint8_t EnodDi); //enodi-enable or disable
+
+
+//enodi-enable or disable
+void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t IRQPriority, uint8_t EnodDi){
+	if(EnonDi == 1){
+		if(IRQNumber <= 31){
+
+		}
+		if(IRQNumber >= 32 && IRQNumber<=63){
+
+		}
+		if(IRQNumber >= 64 && IRQNumber<=95){
+
+		}
+		if(IRQNumber >= 96 && IRQNumber<=127){
+
+		}
+
+
+
+	}
+
+
+
+
+
+}
+
+
 void GPIO_IRQHandling(uint8_t PinNumber);
 
 
