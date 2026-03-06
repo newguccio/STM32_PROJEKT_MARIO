@@ -213,12 +213,6 @@ typedef struct{
 #define GPIO_E 			((GPIO_RegDef_t*)0x40021000)
 #define GPIO_H 			((GPIO_RegDef_t*)0x40021C00)
 
-/*
- *
- * TUTAJ BEDE PREDEFINIOWAJ KODY DO WPISYWANIA DO SYSCFG, ZEBY WYBRAC KTORY PORT (A, B,C ITP)
- *
- */
-#define SYSCFG_CODE 1
 
 
 
