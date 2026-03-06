@@ -169,20 +169,42 @@ typedef struct{
 
 	volatile	uint32_t IMR;    	// offsety: 0x00
 	volatile	uint32_t EMR;		//			0x04
-	volatile	uint32_t RTST;		//			0x08
+	volatile	uint32_t RTSR;		//			0x08
 	volatile	uint32_t FTSR;		//			0x0C
 	volatile	uint32_t SWIER;		//			0x10
 	volatile	uint32_t PR;		//			0x14
 
-}EXTI_RegDef_t;
+}EXTI_TypeDef_t;
+
+typedef struct{
+
+	volatile	uint32_t memrmp;    	// offsety: 0x00
+	volatile	uint32_t pmc;			//			0x04
+	volatile	uint32_t exticr[4];		// dzieki temu zapisowi prościej wykorzystać te rejestry w tworzeniu API dla syscfg wykorzystujac operacje ( / ) i ( % ) z temp1 i temp2
+
+/*	MOŻNA TAK ZROBIĆ ALE LEPIEJ ZROBIC TABLICE
+*	volatile	uint32_t exticr1;		//			0x08
+*	volatile	uint32_t exticr2;		//			0x0C
+*	volatile	uint32_t exticr3;		//			0x10
+*	volatile	uint32_t exticr4;		//			0x14
+*/
+
+	volatile    uint32_t reserved1;		//			0x18 tej pozycji nie ma w instrukcji
+	volatile 	uint32_t reserved2; 	// 			0x1C tej tez nie ma
+	volatile	uint32_t cmpcr;			//			0x20 trzeba zauwazyc offset tego i wiedziec ze pomiedzy jest reserved bo inaczej wejdziemy na obszar reserved
+
+
+}SYSCFG_TypeDef_t;
 
 
 // definiujemy RCC zeby bylo do maina (poprzez typecasting do wskaznika), a adresem jest poczatek calego modulu RCC, wiec mozemy strzalkowac do jego wnetrza a potem uzywac . jako co konkretnie zmienamy
-#define RCC 			((RCC_TypeDef_t*)0x40023800U) //U zeby bylo wiadomoze liczba bez znaku
+#define RCC 						((RCC_TypeDef_t*)0x40023800U)	 //U zeby bylo wiadomoze liczba bez znaku
 
-#define ADC1 			((ADC_TypeDef_t*)0x40012000U) // nie moga byc spacje
+#define ADC1 						((ADC_TypeDef_t*)0x40012000U)	 // nie moga byc spacje
 
-#define EXTI			((EXTI_TypeDef_t*)0x40013C00) // ten adres rzutuje bezposrednio na strukture EXTI i stad wiemy ze jak robimy cos z exti to ma prawidlowy adres
+#define EXTI						((EXTI_TypeDef_t*)0x40013C00)	// ten adres rzutuje bezposrednio na strukture EXTI i stad wiemy ze jak robimy cos z exti to ma prawidlowy adres
+
+#define SYSCFG						((SYSCFG_TypeDef_t*)0x40013800)
 
 #define GPIO_A 			((GPIO_RegDef_t*)0x40020000)
 #define GPIO_B 			((GPIO_RegDef_t*)0x40020400)
@@ -191,6 +213,12 @@ typedef struct{
 #define GPIO_E 			((GPIO_RegDef_t*)0x40021000)
 #define GPIO_H 			((GPIO_RegDef_t*)0x40021C00)
 
+/*
+ *
+ * TUTAJ BEDE PREDEFINIOWAJ KODY DO WPISYWANIA DO SYSCFG, ZEBY WYBRAC KTORY PORT (A, B,C ITP)
+ *
+ */
+#define SYSCFG_CODE 1
 
 
 

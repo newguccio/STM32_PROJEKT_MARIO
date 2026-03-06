@@ -39,9 +39,9 @@ typedef struct{
 #define GPIO_Mode_Alternate 	2
 #define GPIO_Mode_Analog 		3
 //interrupt part
-#define GPIO_MODE_IT_FT			4	// falling edge direction
-#define GPIO_MODE_IT_RT			5	// rising edge direction
-#define GPIO_MODE_IT_RFT		6	// rising/falling edge direction
+#define GPIO_MODE_IT_FT			4	// falling (trigger) edge direction
+#define GPIO_MODE_IT_RT			5	// rising (trigger) edge direction
+#define GPIO_MODE_IT_RFT		6	// rising/falling (trigger) edge direction
 
 
 
@@ -138,29 +138,36 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle){
 	//to jest non interrupt mode
 	if(pGPIOHandle->GPIO_PinConfig.GPIO_PinMode <= GPIO_Mode_Analog){
 		temp = pGPIOHandle->GPIO_PinConfig.GPIO_PinMode << (2 *pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //bierze pin ktory wybralismy i ustawia mu moder
-		pGPIOHandle->pGPIO_X_BaseAddr->moder &= ~(0x11 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //cleac przed ustawieniem
+		pGPIOHandle->pGPIO_X_BaseAddr->moder &= ~(0x11 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //clear przed ustawieniem
 		pGPIOHandle->pGPIO_X_BaseAddr->moder |= temp;
 	}
 	//interrupt mode
 	else{
 		if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_IT_FT){
+			EXTI->FTSR |= (1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); // ustawiamy falling edge, a nie wiemy czy wczesniej nie byl trigger edge wiec prowizorycznie zerujemy pozycje risingedge
+			EXTI->RTSR &= ~(1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);// zerujemy na wszelki rising edge
 
 		}else if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_IT_RT){
+			EXTI->RTSR |= (1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+			EXTI->FTSR &= ~(1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
 
 		}else if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_IT_RFT){
-
+			EXTI->RTSR |= (1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+			EXTI->FTSR |= (1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
 		}
+		uint8_t temp1 = ((pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber) / 4); //jest INTEGER wiec wynik to liczba calkowita wiec jesli podzielic numer pinu przez 4(bo tyle jest bitów na kazdy element) to wskaze numer tablicy exticr[] do ktorej trzeba wpisac, np PA13 -> 13/4 = 3 wiec exticr[3] (exticr4)-> teraz ktory bit w tej tablicy
+		uint8_t temp2 = ((pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber) % 4);	//wynik to reszta dzielenia przez 4(bo tyle jest w rejestrze exti[i]) więc, wartosc temp2 bedzie wynosic dokladne miejsce w juz wybranej tablicy, np PA13 -> 13%4 = 1 wiec w exticr2 na pozycji 1
+		uint8_t port_code;
+		if(pGPIOHandle->pGPIO_X_BaseAddr == GPIO_A) port_code = 0;
+		else if(pGPIOHandle->pGPIO_X_BaseAddr == GPIO_B) port_code = 1;
+		else if(pGPIOHandle->pGPIO_X_BaseAddr == GPIO_C) port_code = 2;
+		else if(pGPIOHandle->pGPIO_X_BaseAddr == GPIO_D) port_code = 3;
+		else if(pGPIOHandle->pGPIO_X_BaseAddr == GPIO_E) port_code = 4;
+		else if(pGPIOHandle->pGPIO_X_BaseAddr == GPIO_H) port_code = 5;
 
+		SYSCFG->exticr[temp1] |= ( port_code << 4*temp2);
 
-
-
-
-
-
-
-
-
-
+		EXTI->IMR  |= (1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); // enable interrupt mask
 	}
 	temp = 0; // zerowanie po poprzedniej czynnosci
 		temp = pGPIOHandle->GPIO_PinConfig.GPIO_PinSpeed << (2 *pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //bierze pin ktory wybralismy i ustawia speed
