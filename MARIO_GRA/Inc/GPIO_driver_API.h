@@ -272,31 +272,45 @@ void GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOX, uint8_t PinNumber){
 
 
 //enodi-enable or disable
-void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t IRQPriority, uint8_t EnodDi){
-	if(EnonDi == 1){
+void GPIO_IRinterruptQConfig(uint8_t IRQNumber, uint8_t EnodDi){
+	if(EnodDi == 1){
 		if(IRQNumber <= 31){
-
+			*NVIC_ISER0 |= (1<<IRQNumber);
 		}
-		if(IRQNumber >= 32 && IRQNumber<=63){
+		else if(IRQNumber >= 32 && IRQNumber<=63){
 
+			*NVIC_ISER1 |= (1<< (IRQNumber%32));// bo jak mamy np 33 to by chcialo sie wpisac w 33 miejscu a 33 powinien byc na bicie nr 1 w ISER1 wiec modulus to zrobi
 		}
-		if(IRQNumber >= 64 && IRQNumber<=95){
-
+		else if(IRQNumber >= 64 && IRQNumber<=95){
+			*NVIC_ISER2 |= (1<< (IRQNumber%64));
 		}
-		if(IRQNumber >= 96 && IRQNumber<=127){
+		else if(IRQNumber >= 96 && IRQNumber<=127){
+			*NVIC_ISER3 |= (1<< (IRQNumber%96));
+		}else{
+			if(IRQNumber <= 31){
+						*NVIC_ICER0 |= (1<<IRQNumber);
+					}
+					else if(IRQNumber >= 32 && IRQNumber<=63){
 
-		}
+						*NVIC_ICER1 |= (1<< (IRQNumber%32));// bo jak mamy np 33 to by chcialo sie wpisac w 33 miejscu a 33 powinien byc na bicie nr 1 w ISER1 wiec modulus to zrobi
+					}
+					else if(IRQNumber >= 64 && IRQNumber<=95){
+						*NVIC_ICER2 |= (1<< (IRQNumber%64));
+					}
+					else if(IRQNumber >= 96 && IRQNumber<=127){
+						*NVIC_ICER3 |= (1<< (IRQNumber%96));
+					}
+			}
+	  }
+}
 
 
 
-	}
-
-
+void GPIO_PriorityConfig(uint8_t Priority, uint8_t IRQNumber){
 
 
 
 }
-
 
 void GPIO_IRQHandling(uint8_t PinNumber);
 

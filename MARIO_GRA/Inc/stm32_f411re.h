@@ -11,6 +11,24 @@
 #define	GPIO_Pin_Reset		RESET
 
 
+/*
+ *
+ * Processor adresses
+ *
+ */
+
+//te 4 do włączania - on: interrupt set enable
+#define NVIC_ISER0			((volatile uint32_t*)0xE000E100)
+#define NVIC_ISER1			((volatile uint32_t*)0xE000E104)
+#define NVIC_ISER2			((volatile uint32_t*)0xE000E108)
+#define NVIC_ISER3			((volatile uint32_t*)0xE000E10C)
+
+//te 4 do wyłączania - off: interrupt clear enabv
+#define NVIC_ICER0			((volatile uint32_t*)0xE000E180)
+#define NVIC_ICER1			((volatile uint32_t*)0xE000E184)
+#define NVIC_ICER2			((volatile uint32_t*)0xE000E188)
+#define NVIC_ICER3			((volatile uint32_t*)0xE000E18C)
+
 
 
 //offset 0x30
@@ -213,7 +231,7 @@ typedef struct{
 #define GPIO_E 			((GPIO_RegDef_t*)0x40021000)
 #define GPIO_H 			((GPIO_RegDef_t*)0x40021C00)
 
-#define IRQ_NO_EXTI1			6
+#define IRQ_NO_EXTI0			6
 #define IRQ_NO_EXTI1			7
 #define IRQ_NO_EXTI2			8
 #define IRQ_NO_EXTI3			9
