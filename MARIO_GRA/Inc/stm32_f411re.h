@@ -23,11 +23,15 @@
 #define NVIC_ISER2			((volatile uint32_t*)0xE000E108)
 #define NVIC_ISER3			((volatile uint32_t*)0xE000E10C)
 
-//te 4 do wyłączania - off: interrupt clear enabv
+//te 4 do wyłączania - off: interrupt clear enable
 #define NVIC_ICER0			((volatile uint32_t*)0xE000E180)
 #define NVIC_ICER1			((volatile uint32_t*)0xE000E184)
 #define NVIC_ICER2			((volatile uint32_t*)0xE000E188)
 #define NVIC_ICER3			((volatile uint32_t*)0xE000E18C)
+
+//priority
+#define NVIC_IPR_BaseAddr	((volatile uint32_t*)0xE000E400)
+
 
 
 
