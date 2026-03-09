@@ -10,7 +10,6 @@
 #define	GPIO_Pin_Set 		SET
 #define	GPIO_Pin_Reset		RESET
 
-
 /*
  *
  * Processor adresses
@@ -243,6 +242,7 @@ typedef struct{
 #define IRQ_NO_EXTI5_9			23
 #define IRQ_NO_EXTI010_15		40
 
+#define APB2_ADC1_Enable (RCC->apb2enr.adc1 = 1)
 
 
 // te na gorze GPIO_RegDef_t jest zamiast tego

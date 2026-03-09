@@ -23,21 +23,52 @@
 
 void ADC_ON(void);
 uint32_t ADC_Control_Read(uint32_t channel);
+void joystickInit(void);
 
 int main(void)
 
 {
+	void joystickInit(void){
 
-	 ADC_ON();
+	GPIO_PeripheralClockControl(GPIO_A, 1);
 
-	 uint8_t button_pressed;
+	//RCC->apb2enr.adc1 = 1;
+	GPIO_Handle_t JoyX, JoyY, JoyBtn;
+
+	JoyX.pGPIO_X_BaseAddr = GPIO_A;
+	JoyX.GPIO_PinConfig.GPIO_PinNumber = 0; //PA0
+	JoyX.GPIO_PinConfig.GPIO_PinMode = GPIO_Mode_Analog; //moder analogowy
+	GPIO_Init(&JoyX);
+
+	JoyY.pGPIO_X_BaseAddr = GPIO_A;
+	JoyY.GPIO_PinConfig.GPIO_PinNumber = 1; //PA1
+	JoyY.GPIO_PinConfig.GPIO_PinMode = GPIO_Mode_Analog; //moder analogowy
+	GPIO_Init(&JoyY);
+
+	JoyBtn.pGPIO_X_BaseAddr = GPIO_A;
+	JoyBtn.GPIO_PinConfig.GPIO_PinNumber = 4; //PA4
+	JoyBtn.GPIO_PinConfig.GPIO_PinMode = GPIO_Mode_Input;
+	JoyBtn.GPIO_PinConfig.GPIO_PinPullUpPulldownControl = Pull_up;
+	GPIO_Init(&JoyBtn);
+
+}
+
+		joystickInit();//funkcja zrobiona na API
+
+		ADC_ON();
+
+
+
+
+	uint8_t button_pressed;
 
 	 while(1){
+
 		uint32_t position_x = ADC_Control_Read(0); //nie trzeba czyscic bo samo odczytanie czysci
 		uint32_t position_y = ADC_Control_Read(1); //nie trzeba czyscic bo samo odczytanie czysci
 
 		button_pressed = ((GPIO_A->idr>>4) & 0x1) ;
-
+		//button_pressed = JoyBtn
 
 		printf("pozycja z jpysticka: %ld %ld %d \n", position_x, position_y, button_pressed);
 

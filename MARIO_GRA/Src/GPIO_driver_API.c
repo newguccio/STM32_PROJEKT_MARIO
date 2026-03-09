@@ -60,8 +60,9 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle){
 	uint32_t temp = 0;
 	//to jest non interrupt mode
 	if(pGPIOHandle->GPIO_PinConfig.GPIO_PinMode <= GPIO_Mode_Analog){
+		pGPIOHandle->pGPIO_X_BaseAddr->moder &= ~(0x3 << 2* pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //clear przed ustawieniem
 		temp = pGPIOHandle->GPIO_PinConfig.GPIO_PinMode << (2 *pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //bierze pin ktory wybralismy i ustawia mu moder
-		pGPIOHandle->pGPIO_X_BaseAddr->moder &= ~(0x11 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //clear przed ustawieniem
+		//pGPIOHandle->pGPIO_X_BaseAddr->moder &= ~(0x3 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //clear przed ustawieniem
 		pGPIOHandle->pGPIO_X_BaseAddr->moder |= temp;
 	}
 	//interrupt mode
@@ -93,14 +94,16 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle){
 		EXTI->IMR  |= (1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); // enable interrupt mask
 	}
 	temp = 0; // zerowanie po poprzedniej czynnosci
+		pGPIOHandle->pGPIO_X_BaseAddr->ospeedr &= ~(0x3 << 2* pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
 		temp = pGPIOHandle->GPIO_PinConfig.GPIO_PinSpeed << (2 *pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //bierze pin ktory wybralismy i ustawia speed
-		pGPIOHandle->pGPIO_X_BaseAddr->ospeedr &= ~(0x11 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+		//pGPIOHandle->pGPIO_X_BaseAddr->ospeedr &= ~(0x3 << 2* pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
 		pGPIOHandle->pGPIO_X_BaseAddr->ospeedr |= temp;
 
 
 	temp = 0; // zerowanie po poprzedniej czynnosci
+		pGPIOHandle->pGPIO_X_BaseAddr->pupdr &= ~(0x3 << 2* pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
 		temp = pGPIOHandle->GPIO_PinConfig.GPIO_PinPullUpPulldownControl << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-		pGPIOHandle->pGPIO_X_BaseAddr->pupdr &= ~(0x11 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+	//	pGPIOHandle->pGPIO_X_BaseAddr->pupdr &= ~(0x3 << 2* pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
 		pGPIOHandle->pGPIO_X_BaseAddr->pupdr |= temp;
 
 	temp = 0;
@@ -239,8 +242,8 @@ void GPIO_PriorityConfig(uint8_t IRQPriority, uint8_t IRQNumber){
 
 void GPIO_IRQHandling(uint8_t PinNumber){
 
+	if (EXTI->PR & (1 << PinNumber)) {
 
-
-
-
+	        EXTI->PR |= (1 << PinNumber); // Jeśli tak, to ją czyścimy wpisując 1
+	    }
 }
