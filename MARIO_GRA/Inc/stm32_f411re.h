@@ -12,7 +12,7 @@
 
 /*
  *
- * Processor adresses
+ *@ Processor adresses
  *
  */
 
@@ -217,6 +217,20 @@ typedef struct{
 
 }SYSCFG_TypeDef_t;
 
+typedef struct{
+
+	volatile uint32_t cr1;
+	volatile uint32_t cr2;
+	volatile uint32_t sr;
+	volatile uint32_t dr;
+	volatile uint32_t crcpr;
+	volatile uint32_t rxcrcr;
+	volatile uint32_t txcrcr;
+	volatile uint32_t i2scgr;
+	volatile uint32_t i2spr;
+
+}SPI_RegDef_t;
+
 
 // definiujemy RCC zeby bylo do maina (poprzez typecasting do wskaznika), a adresem jest poczatek calego modulu RCC, wiec mozemy strzalkowac do jego wnetrza a potem uzywac . jako co konkretnie zmienamy
 #define RCC 						((RCC_TypeDef_t*)0x40023800U)	 //U zeby bylo wiadomoze liczba bez znaku
@@ -226,6 +240,10 @@ typedef struct{
 #define EXTI						((EXTI_TypeDef_t*)0x40013C00)	// ten adres rzutuje bezposrednio na strukture EXTI i stad wiemy ze jak robimy cos z exti to ma prawidlowy adres
 
 #define SYSCFG						((SYSCFG_TypeDef_t*)0x40013800)
+
+#define SPI1						((SPI_RegDef_t*)0x40013000)
+#define SPI2						((SPI_RegDef_t*)0x40013800)
+#define SPI3						((SPI_RegDef_t*)0x40013C00)
 
 #define GPIO_A 			((GPIO_RegDef_t*)0x40020000)
 #define GPIO_B 			((GPIO_RegDef_t*)0x40020400)
