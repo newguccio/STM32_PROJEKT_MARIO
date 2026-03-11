@@ -242,15 +242,15 @@ typedef struct{
 #define SYSCFG						((SYSCFG_TypeDef_t*)0x40013800)
 
 #define SPI1						((SPI_RegDef_t*)0x40013000)
-#define SPI2						((SPI_RegDef_t*)0x40013800)
-#define SPI3						((SPI_RegDef_t*)0x40013C00)
+#define SPI2						((SPI_RegDef_t*)0x40003800)
+#define SPI3						((SPI_RegDef_t*)0x40003C00)
 
-#define GPIO_A 			((GPIO_RegDef_t*)0x40020000)
-#define GPIO_B 			((GPIO_RegDef_t*)0x40020400)
-#define GPIO_C 			((GPIO_RegDef_t*)0x4002800)
-#define GPIO_D 			((GPIO_RegDef_t*)0x40020C00)
-#define GPIO_E 			((GPIO_RegDef_t*)0x40021000)
-#define GPIO_H 			((GPIO_RegDef_t*)0x40021C00)
+#define GPIO_A 						((GPIO_RegDef_t*)0x40020000)
+#define GPIO_B 						((GPIO_RegDef_t*)0x40020400)
+#define GPIO_C 						((GPIO_RegDef_t*)0x4002800)
+#define GPIO_D 						((GPIO_RegDef_t*)0x40020C00)
+#define GPIO_E 						((GPIO_RegDef_t*)0x40021000)
+#define GPIO_H 						((GPIO_RegDef_t*)0x40021C00)
 
 #define IRQ_NO_EXTI0			6
 #define IRQ_NO_EXTI1			7
@@ -260,7 +260,28 @@ typedef struct{
 #define IRQ_NO_EXTI5_9			23
 #define IRQ_NO_EXTI010_15		40
 
-#define APB2_ADC1_Enable (RCC->apb2enr.adc1 = 1)
+#define APB2_ADC1_Enable() 		(RCC->apb2enr.adc1 = 1)
+
+#define APB2_SPI1_Enable()  		(RCC->apb2enr.spi1en |= 1) // mimo ze = byloby git to |= to dobry nawyk
+#define APB1_SPI2_Enable()			(RCC->apb1enr.spi2en |= 1)
+#define APB1_SPI3_Enable()			(RCC->apb1enr.spi3en |= 1)
+
+#define IRQ_NO_SPI1				35
+#define IRQ_NO_SPI2				36
+#define IRQ_NO_SPI3				51
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // te na gorze GPIO_RegDef_t jest zamiast tego

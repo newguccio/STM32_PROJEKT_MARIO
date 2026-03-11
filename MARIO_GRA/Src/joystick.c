@@ -25,7 +25,7 @@ void ADC_ON(void){
 //	GPIO_A->pupdr |= (1<<8);
 						     //odpalenie szyny apb2 bo tam jest adc1
 
-	APB2_ADC1_Enable;
+	APB2_ADC1_Enable();
 	ADC1->ADC_CR2 |= (1<<0); 				 //ustawienie ADON na 1
 	ADC1->adc_smpr2 |= (7<<0) | (7<<3);		 //ustawienie probkowania na max cykle dla pa0 i pa1 - bez miany tego powinno dzialac
 
