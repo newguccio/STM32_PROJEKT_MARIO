@@ -66,24 +66,23 @@ void SPI_Data_Send(SPI_RegDef_t *pSPIx, uint8_t *pTxBuffer, uint32_t length){
 
 	while(length >0){
 
+		//to moze sprawiac problemy, polling
 		while (!( pSPIx->sr & (1 << 1) )); //patrzymy flage txe czy nie jest 0, zadzialaloba zwykla ekstrakcja pSPIx->sr >> 1 & 1, ale uzyty zapis sprawdza czy w 1 pozycji jest 1 a nie spisuje jego wartosc
-	//	while(SPI_GetStatusFlag(pSPIx, SPI_TXE_Flag)== Flag_Reset); to samo co na gorze ale w funkcji wiec mozna w niej sprawdza rozne flagi nie tylko ta jedna
+
+		//	while(SPI_GetStatusFlag(pSPIx, SPI_TXE_Flag)== Flag_Reset); to samo co na gorze ale w funkcji wiec mozna w niej sprawdza rozne flagi nie tylko ta jedna
 		if( ( pSPIx->cr1 & (1 << 11 ) ) ){ // jesli  jest tam cokolwiek to data format == 16, nie mozemy sprawdzi ==1 to bo tajkbysmy porownywali cala liczbe do 1 a chcemy tylko pozycje, == (1 <<11) by zadzialalo
 			pSPIx->dr = *((uint16_t*)pTxBuffer); //ładujemy dane do buforu,a typecastujemy bo dalismy uint8 a dla 16bitow chcemu uint16
 			length--; //dwa razy bo 16 bitow chcemy a wysyla sie po 8 wiec dwa walimy
 			length--;
-			(uint16_t*)pTxBuffer++; //inkrementujemy po tym jak odbjerzemy bajt cały
+			pTxBuffer++;
+			pTxBuffer++;
+		// chat mowi ze nie zadziala	(uint16_t*)pTxBuffer++; //inkrementujemy po tym jak odbjerzemy bajt cały czyli słowo/dana ktora chcemy przeslac i przechodzimy do kolenej
 		}else {
 			pSPIx->dr = *pTxBuffer;
 			length--;
 			pTxBuffer++;
 		}
 	}
-
-
-
-
-
 }
 void SPI_Received_Data(SPI_RegDef_t *pSPIx, uint8_t *pRxData, uint32_t length);
 
