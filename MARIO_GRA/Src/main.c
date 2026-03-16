@@ -30,9 +30,9 @@ void delay_ms(uint32_t ms);
 void spi_Init(void);
 void command_to_screen(uint8_t command);
 void data_to_screen(uint8_t data);
-void SPI_Draw(uint8_t x, uint8_t y, uint16_t color);
+void SPI_Draw(uint8_t x0, uint8_t x1,uint8_t y0, uint8_t y1, uint16_t color);
 void SPI_Set_Cursor(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);
-
+void screen_hardware_reset(void);
 
 int main(void){
 
@@ -43,50 +43,39 @@ int main(void){
 
 		ADC_ON();
 
+		screen_hardware_reset();
+		delay_ms(100);
+		command_to_screen(Sleep_Out);
+		delay_ms(100);
+
+
+		command_to_screen(0x3A); //interface pixel format
+		data_to_screen(0x05);  // RGB565 16bit pixel format
+
+		//  command_to_screen(0x21); // zmiana orientacji z bialy na czarny
+		command_to_screen(Display_On);
+
+
+
+
+
 
 	uint8_t button_pressed;
-	GPIO_C->odr &= ~(1 << 0); // Ustaw RST na 0 (niskie napięcie)
-	delay_ms(50);             // Trzymaj reset przez 50ms
 
-	GPIO_C->odr |= (1 << 0);  // Ustaw RST na 1 (wysokie napięcie - puszczasz reset)
-	delay_ms(150);            // Poczekaj 150ms, aż ekran "otworzy oczy"
 
-	// --- 2. Inicjalizacja Programowa (Wake up!) ---
-	command_to_screen(0x11);  // Komenda: Sleep Out (wybudzenie)
-	delay_ms(120);            // KLUCZOWE: Ekran potrzebuje czasu na kawę
 
-	command_to_screen(0x3A);  // Pixel Format
-	data_to_screen(0x05);     // 16-bit RGB565
-
-	command_to_screen(0x29);  // Display ON
-	delay_ms(20);
 
 
 	 while(1){
-
+		 SPI_Draw(50,80, 80, 90,0xF800 );
 	//	uint32_t position_x = ADC_Control_Read(0); //nie trzeba czyscic bo samo odczytanie czysci
 	//	uint32_t position_y = ADC_Control_Read(1); //nie trzeba czyscic bo samo odczytanie czysci
 
-		button_pressed = ((GPIO_A->idr>>4) & 0x1) ;
-
-
-			uint32_t x_raw = ADC_Control_Read(0);
-		    uint32_t y_raw = ADC_Control_Read(1);
-
-		    // 2. Skalowanie (4095 -> 128/160)
-		    uint8_t x_pos = x_raw / 32;
-		    uint8_t y_pos = y_raw / 25;
-
-		    // 3. Rysowanie czerwonej kropki Mario
-		    SPI_Draw(x_pos, y_pos, 0xF800);
-
-		    // Opcjonalnie: mały delay, żeby kropka nie "migała"
-		    delay_ms(5);
-
-
+//		button_pressed = ((GPIO_A->idr>>4) & 0x1) ;
+//
 		//button_pressed = JoyBtn
 
-		//printf("pozycja z jpysticka: %ld %ld %d \n", position_x, position_y, button_pressed);
+//		printf("pozycja z jpysticka: %ld %ld %d \n", position_x, position_y, button_pressed);
 
 		//delay_ms(500);
 
@@ -143,6 +132,7 @@ void spi_Init(void){
 	GPIO_Handle_t RST = {0};
 
 	GPIO_PeripheralClockControl(GPIO_C, 1);
+	SPI_PeripheralClockControl(SPI3, 1);
 
 	DIN.pGPIO_X_BaseAddr = GPIO_C;
 	DIN.GPIO_PinConfig.GPIO_PinNumber = 12;
@@ -176,8 +166,8 @@ void spi_Init(void){
 	DIN.GPIO_PinConfig.GPIO_PinSpeed = high_speed;
 	GPIO_Init(&RST);
 
-	SPI_Handle_t SPI_3;
-	SPI_PeripheralClockControl(SPI3, 1);
+	SPI_Handle_t SPI_3 = {0};
+
 	SPI_3.pSPIx = SPI3;
 	SPI_3.SPI_Config.SPI_DeviceMode |= SPI_Master;
 	SPI_3.SPI_Config.SPI_BusConfig |=	SPI_BusConfig_fullduplex;

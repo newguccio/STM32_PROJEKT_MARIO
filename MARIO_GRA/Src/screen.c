@@ -11,7 +11,21 @@
 #include "GPIO_driver_API.h"
 #include "SPI_Driver_API.h"
 
+
+
 void SPI_Received_Data(SPI_RegDef_t *pSPIx, uint8_t *pRxData, uint32_t length);
+void delay_ms(uint32_t ms);
+
+
+
+
+void screen_hardware_reset(void){
+	GPIO_C->odr &= ~(1<<0);
+	delay_ms(50);
+	GPIO_C->odr |= (1<<0);
+	delay_ms(50);
+}
+
 
 
 void command_to_screen(uint8_t command){
@@ -23,7 +37,7 @@ GPIO_C->odr &= ~(1<<2);
 //teraz dziala w trybie otrzymywania rozkazow i dziala bo CS = low
 
 SPI_Data_Send(SPI3, &command , 1);
-
+while(!(SPI3->sr & 1 << 1) );
 while( (SPI3->sr & 1 << 7) ); // busy flag czy przetworzym komende
 
 // zeby zachowac kontrole nad stanem ekranu, zebysmy w nastepnej funkcji wiedzieli ze trzeba wlaczyc a nie czy jest wlaczone sie zastanwiac
@@ -39,50 +53,48 @@ GPIO_C->odr |= (1<<1);
 GPIO_C->odr &= ~(1<<2);
 //teraz dziala w trybie otrzymywania rozkazow i dziala bo CS = low
 SPI_Data_Send(SPI3, &data, 1);
-
+while(!(SPI3->sr & 1 << 1) );
 while( (SPI3->sr & (1 << 7)) );
+
 
 GPIO_C->odr |= (1 << 2);
 }
 
 
+//x0 start_x, x1 end_x     y0 start_y, y1 end_y			zakres 0-127 (X) i 0-159 (Y)
+void SPI_Set_Cursor(uint8_t x0, uint8_t x1, uint8_t y0, uint8_t y1){
 
-void SPI_Set_Cursor(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1){
+	 command_to_screen(0x2A);
+	 data_to_screen(0);
+	 data_to_screen(x0);
+	 data_to_screen(0);
+	 data_to_screen(x1);
 
-	// 1. Ustawienie zakresu KOLUMN (X)
-	    command_to_screen(0x2A);
-	    data_to_screen(0x00); // High byte (zawsze 0 dla 128px)
-	    data_to_screen(x0);   // Start X
-	    data_to_screen(0x00); // High byte
-	    data_to_screen(x1);   // Koniec X
-
-	    // 2. Ustawienie zakresu WIERSZY (Y)
-	    command_to_screen(0x2B);
-	    data_to_screen(0x00); // High byte
-	    data_to_screen(y0);   // Start Y
-	    data_to_screen(0x00); // High byte
-	    data_to_screen(y1);   // Koniec Y
-
-	    // 3. Rozkaz zapisu do pamięci (RAM WRITE)
-	    // Wszystko co wyślesz po tej komendzie, ekran uzna za kolory pikseli
-	    command_to_screen(0x2C);
-
-
+	 command_to_screen(0x2B);
+	 data_to_screen(0);
+	 data_to_screen(y0);
+	 data_to_screen(0);
+	 data_to_screen(y1);
 
 
 }
 
 
-void SPI_Draw(uint8_t x, uint8_t y, uint16_t color){
+void SPI_Draw(uint8_t x0, uint8_t x1,uint8_t y0, uint8_t y1, uint16_t color){
 
-	if(x >= 128 || y >= 160) return;
+	//memory write
 
-	    // Ustawiamy okno 1x1 w punkcie (x, y)
-	SPI_Set_Cursor(x, y, x, y);
+	SPI_Set_Cursor(x0, x1, y0,y1);
+	command_to_screen(0x2C);
 
-	    // Wysyłamy 16-bitowy kolor jako dwa bajty (bo DFF=8)
-	    data_to_screen(color >> 8);   // Starszy bajt (np. 0xF8)
-	    data_to_screen(color & 0xFF); // Młodszy bajt (np. 0x00)
+	uint32_t obszar = (x1-x0+1)*(y1-y0+1);
+
+	for(uint32_t i =0; i < obszar;i++){
+		data_to_screen(color >> 8);   // Bajt 1
+		data_to_screen(color & 0xFF);
+	}
+
+
 
 
 }

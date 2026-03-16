@@ -55,22 +55,27 @@ void SPI_Init(SPI_Handle_t *pSPIHandle){
 	temp |= pSPIHandle->SPI_Config.SPI_CPOL << 1;
 	temp |= pSPIHandle->SPI_Config.SPI_SclkSpeed << 3;
 	temp |= pSPIHandle->SPI_Config.SPI_SSM << 9;
+	if(pSPIHandle->SPI_Config.SPI_SSM == SPI_SSM_software ){
+		temp |= (1<<8);		//ssi = 1 DLA SOFTWARE	internal slave select
+	}
 	temp |= pSPIHandle->SPI_Config.SPI_DFF << 11;
 
-	pSPIHandle->pSPIx->cr1 = temp;  //lepiej dac samo = bo na poczatku ustalilismy ze temp=0, a CR1 nie wiemy czy napewno są same 0
+	temp |= (1 << 6); // SPE = 1 spi enable
+	pSPIHandle->pSPIx->cr1 = temp; //lepiej dac samo = bo na poczatku ustalilismy ze temp=0, a CR1 nie wiemy czy napewno są same 0
+
 }
+
 void SPI_DeInit(SPI_RegDef_t *pSPIx);
 
 //blocking base- non interrupt
 void SPI_Data_Send(SPI_RegDef_t *pSPIx, uint8_t *pTxBuffer, uint32_t length){
 
 	while(length >0){
-
 		//to moze sprawiac problemy, polling
 		while (!( pSPIx->sr & (1 << 1) )); //patrzymy flage txe czy nie jest 0, zadzialaloba zwykla ekstrakcja pSPIx->sr >> 1 & 1, ale uzyty zapis sprawdza czy w 1 pozycji jest 1 a nie spisuje jego wartosc
 
 		//	while(SPI_GetStatusFlag(pSPIx, SPI_TXE_Flag)== Flag_Reset); to samo co na gorze ale w funkcji wiec mozna w niej sprawdza rozne flagi nie tylko ta jedna
-		if( ( pSPIx->cr1 & (1 << 11 ) ) ){ // jesli  jest tam cokolwiek to data format == 16, nie mozemy sprawdzi ==1 to bo tajkbysmy porownywali cala liczbe do 1 a chcemy tylko pozycje, == (1 <<11) by zadzialalo
+		if(  pSPIx->cr1 & (1 << 11 )  ){ // jesli  jest tam cokolwiek to data format == 16, nie mozemy sprawdzi ==1 to bo tajkbysmy porownywali cala liczbe do 1 a chcemy tylko pozycje, == (1 <<11) by zadzialalo
 			pSPIx->dr = *((uint16_t*)pTxBuffer); //ładujemy dane do buforu,a typecastujemy bo dalismy uint8 a dla 16bitow chcemu uint16
 			length--; //dwa razy bo 16 bitow chcemy a wysyla sie po 8 wiec dwa walimy
 			length--;
@@ -84,6 +89,9 @@ void SPI_Data_Send(SPI_RegDef_t *pSPIx, uint8_t *pTxBuffer, uint32_t length){
 		}
 	}
 }
+
+
+
 void SPI_Received_Data(SPI_RegDef_t *pSPIx, uint8_t *pRxData, uint32_t length);
 
 void SPI_IRinterruptQConfig(uint8_t IRQNumber, uint8_t EnodDi);

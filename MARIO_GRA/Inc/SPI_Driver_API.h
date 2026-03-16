@@ -60,6 +60,8 @@
 //w rejestrze cr1 jesli uzywamy halfpuplex trzeba ustawic BidiMode na 1 i kontrolowac zmieniac Bidioe i wsm sporo innych
 
 
+#define Sleep_Out 			0x11
+#define Display_On 			0x29
 
 
 typedef struct{

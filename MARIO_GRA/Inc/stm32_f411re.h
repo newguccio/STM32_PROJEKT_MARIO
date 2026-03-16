@@ -247,7 +247,7 @@ typedef struct{
 
 #define GPIO_A 						((GPIO_RegDef_t*)0x40020000)
 #define GPIO_B 						((GPIO_RegDef_t*)0x40020400)
-#define GPIO_C 						((GPIO_RegDef_t*)0x4002800)
+#define GPIO_C 						((GPIO_RegDef_t*)0x40020800) //bylo 7 znakow 0x40028000
 #define GPIO_D 						((GPIO_RegDef_t*)0x40020C00)
 #define GPIO_E 						((GPIO_RegDef_t*)0x40021000)
 #define GPIO_H 						((GPIO_RegDef_t*)0x40021C00)
@@ -260,7 +260,7 @@ typedef struct{
 #define IRQ_NO_EXTI5_9			23
 #define IRQ_NO_EXTI010_15		40
 
-#define APB2_ADC1_Enable() 		(RCC->apb2enr.adc1 = 1)
+#define APB2_ADC1_Enable() 			(RCC->apb2enr.adc1 = 1)
 
 #define APB2_SPI1_Enable()  		(RCC->apb2enr.spi1en |= 1) // mimo ze = byloby git to |= to dobry nawyk
 #define APB1_SPI2_Enable()			(RCC->apb1enr.spi2en |= 1)
