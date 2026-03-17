@@ -76,16 +76,13 @@ void SPI_Set_Cursor(uint8_t x0, uint8_t x1, uint8_t y0, uint8_t y1){
 	 data_to_screen(0);
 	 data_to_screen(y1);
 
-
 }
 
 
 void SPI_Draw(uint8_t x0, uint8_t x1,uint8_t y0, uint8_t y1, uint16_t color){
 
-	//memory write
-
 	SPI_Set_Cursor(x0, x1, y0,y1);
-	command_to_screen(0x2C);
+	command_to_screen(0x2C); //memory write
 
 	uint32_t obszar = (x1-x0+1)*(y1-y0+1);
 
@@ -93,8 +90,6 @@ void SPI_Draw(uint8_t x0, uint8_t x1,uint8_t y0, uint8_t y1, uint16_t color){
 		data_to_screen(color >> 8);   // Bajt 1
 		data_to_screen(color & 0xFF);
 	}
-
-
-
-
+	pos_x = x0;
+	pos_y = y1;
 }

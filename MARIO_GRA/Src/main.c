@@ -33,6 +33,12 @@ void data_to_screen(uint8_t data);
 void SPI_Draw(uint8_t x0, uint8_t x1,uint8_t y0, uint8_t y1, uint16_t color);
 void SPI_Set_Cursor(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);
 void screen_hardware_reset(void);
+void screen_enable_sequence(void);
+
+
+uint16_t pos_x =0;
+uint16_t pos_y =0;
+
 
 int main(void){
 
@@ -43,17 +49,7 @@ int main(void){
 
 		ADC_ON();
 
-		screen_hardware_reset();
-		delay_ms(100);
-		command_to_screen(Sleep_Out);
-		delay_ms(100);
-
-
-		command_to_screen(0x3A); //interface pixel format
-		data_to_screen(0x05);  // RGB565 16bit pixel format
-
-		//  command_to_screen(0x21); // zmiana orientacji z bialy na czarny
-		command_to_screen(Display_On);
+		screen_enable_sequence();
 
 
 
@@ -178,3 +174,18 @@ void spi_Init(void){
 	SPI_3.SPI_Config.SPI_DFF |= SPI_dff_8bits; //sprawdzic 16
 	SPI_Init(&SPI_3);
 }
+
+	void screen_enable_sequence(void){
+		screen_hardware_reset();
+		delay_ms(100);
+		command_to_screen(Sleep_Out);
+		delay_ms(100);
+
+
+		command_to_screen(0x3A); //interface pixel format
+		data_to_screen(0x05);  // RGB565 16bit pixel format
+
+		//  command_to_screen(0x21); // zmiana orientacji z bialy na czarny
+		command_to_screen(Display_On);
+	}
+
