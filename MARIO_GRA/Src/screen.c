@@ -11,7 +11,8 @@
 #include "GPIO_driver_API.h"
 #include "SPI_Driver_API.h"
 
-
+extern uint8_t pos_x;
+extern uint8_t pos_y;
 
 void SPI_Received_Data(SPI_RegDef_t *pSPIx, uint8_t *pRxData, uint32_t length);
 void delay_ms(uint32_t ms);
@@ -21,9 +22,9 @@ void delay_ms(uint32_t ms);
 
 void screen_hardware_reset(void){
 	GPIO_C->odr &= ~(1<<0);
-	delay_ms(50);
+	delay_ms(100);
 	GPIO_C->odr |= (1<<0);
-	delay_ms(50);
+	delay_ms(100);
 }
 
 
@@ -90,6 +91,4 @@ void SPI_Draw(uint8_t x0, uint8_t x1,uint8_t y0, uint8_t y1, uint16_t color){
 		data_to_screen(color >> 8);   // Bajt 1
 		data_to_screen(color & 0xFF);
 	}
-	pos_x = x0;
-	pos_y = y1;
 }

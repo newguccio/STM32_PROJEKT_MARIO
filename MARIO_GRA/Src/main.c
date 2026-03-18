@@ -35,47 +35,63 @@ void SPI_Set_Cursor(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);
 void screen_hardware_reset(void);
 void screen_enable_sequence(void);
 
+void move_jump(uint16_t button);
+void move_left(uint32_t move);
+void move_right(uint32_t move);
 
-uint16_t pos_x =0;
-uint16_t pos_y =0;
-
+uint16_t pos_y0 =10;
+uint16_t pos_y1 =20;
+uint8_t button_pressed;
 
 int main(void){
 
 
-		joystickInit();//funkcja zrobiona na API
-
-		spi_Init();
+ 		joystickInit();//funkcja zrobiona na API
 
 		ADC_ON();
 
+		spi_Init();
+
 		screen_enable_sequence();
 
+		SPI_Draw(0, 127, 0, 159, 0x0000);
 
-
-
-
-
-	uint8_t button_pressed;
-
-
-
-
+		SPI_Draw(5 ,25 , pos_y0, pos_y1, 0xF800);
 
 	 while(1){
-		 SPI_Draw(50,80, 80, 90,0xF800 );
-	//	uint32_t position_x = ADC_Control_Read(0); //nie trzeba czyscic bo samo odczytanie czysci
-	//	uint32_t position_y = ADC_Control_Read(1); //nie trzeba czyscic bo samo odczytanie czysci
+		uint32_t position_x_adc = ADC_Control_Read(0); //nie trzeba czyscic bo samo odczytanie czysci
+		uint32_t position_y_adc = ADC_Control_Read(1); //nie trzeba czyscic bo samo odczytanie czysci
+		button_pressed = ((GPIO_A->idr >> 4) & 0x1);
 
-//		button_pressed = ((GPIO_A->idr>>4) & 0x1) ;
-//
-		//button_pressed = JoyBtn
+	//	move_left(position_x_adc);
+		if(position_y_adc > 2500 || position_y_adc < 1500){
 
-//		printf("pozycja z jpysticka: %ld %ld %d \n", position_x, position_y, button_pressed);
+			if(position_y_adc > 2500){
+			move_right(position_y_adc);
+			SPI_Draw(5, 25, (pos_y0 -2), (pos_y1 -2), 0x0000);
+			SPI_Draw(5 ,25 , pos_y0, pos_y1, 0xF800 );
+			}else{
+			move_left(position_y_adc);
+			SPI_Draw(5, 25, pos_y0 +2, pos_y1 +2, 0x0000);
+			SPI_Draw(5 ,25 , pos_y0, pos_y1, 0xF800 );
+			}
+		}
 
-		//delay_ms(500);
 
-		//for(volatile int i = 0; i < 500000; i++);
+
+
+
+
+
+
+	//	button_pressed = JoyBtn.
+
+
+
+	printf("pozycja z jpysticka: %ld %ld %d \n", position_x_adc, position_y_adc, button_pressed);
+	//delay_ms(500);
+
+	//	for(volatile int i = 0; i < 500000; i++);
 
 	 }
 
@@ -88,7 +104,7 @@ int main(void){
 
 void delay_ms(uint32_t ms) {
 
-    for(uint32_t i = 0; i < (ms * 10000); i++) {
+    for(uint32_t i = 0; i < (ms * 1000); i++) {
         __asm("nop"); // Pusta instrukcja, żeby kompilator nie usunął pętli
     }
 }
@@ -116,7 +132,6 @@ JoyBtn.GPIO_PinConfig.GPIO_PinNumber = 4; //PA4
 JoyBtn.GPIO_PinConfig.GPIO_PinMode = GPIO_Mode_Input;
 JoyBtn.GPIO_PinConfig.GPIO_PinPullUpPulldownControl = Pull_up;
 GPIO_Init(&JoyBtn);
-
 }
 
 void spi_Init(void){
@@ -167,7 +182,7 @@ void spi_Init(void){
 	SPI_3.pSPIx = SPI3;
 	SPI_3.SPI_Config.SPI_DeviceMode |= SPI_Master;
 	SPI_3.SPI_Config.SPI_BusConfig |=	SPI_BusConfig_fullduplex;
-	SPI_3.SPI_Config.SPI_SclkSpeed |= SPI_SCLK_SPEED_div32;
+	SPI_3.SPI_Config.SPI_SclkSpeed |= SPI_SCLK_SPEED_div4;
 	SPI_3.SPI_Config.SPI_SSM |= SPI_SSM_software;
 	SPI_3.SPI_Config.SPI_CPHA |= SPI_CPHA_0;
 	SPI_3.SPI_Config.SPI_CPOL|= SPI_CPOL_0;
@@ -177,9 +192,11 @@ void spi_Init(void){
 
 	void screen_enable_sequence(void){
 		screen_hardware_reset();
-		delay_ms(100);
+		delay_ms(50);
+		command_to_screen(0x01); //software reset
+		delay_ms(50);
 		command_to_screen(Sleep_Out);
-		delay_ms(100);
+		delay_ms(50);
 
 
 		command_to_screen(0x3A); //interface pixel format
@@ -187,5 +204,7 @@ void spi_Init(void){
 
 		//  command_to_screen(0x21); // zmiana orientacji z bialy na czarny
 		command_to_screen(Display_On);
+
+
 	}
 
