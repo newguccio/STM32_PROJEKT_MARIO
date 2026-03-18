@@ -20,6 +20,7 @@
 #include  <stdio.h>
 #include "GPIO_driver_API.h"
 #include "SPI_Driver_API.h"
+#include "object_structure.h"
 
 void ADC_ON(void);
 uint32_t ADC_Control_Read(uint32_t channel);
@@ -36,8 +37,8 @@ void screen_hardware_reset(void);
 void screen_enable_sequence(void);
 
 void move_jump(uint16_t button);
-void move_left(uint32_t move);
-void move_right(uint32_t move);
+void move_left(uint32_t move,  object *pObject);
+void move_right(uint32_t move,  object *pObject);
 
 uint16_t pos_y0 =10;
 uint16_t pos_y1 =20;
@@ -58,7 +59,18 @@ int main(void){
 
 		SPI_Draw(0, 127, 0, 159, 0x0000);
 
-		SPI_Draw(5 ,25 , pos_y0, pos_y1, 0xF800);
+	///	SPI_Draw(5 ,25 , pos_y0, pos_y1, 0xF800);
+
+		object Object;
+
+		Object.pos_x0 = 5;
+		Object.pos_x1 = 25;
+		Object.pos_y0 = pos_y0;
+		Object.pos_y1 = pos_y1;
+
+
+		object_draw(&Object, 0x07E0);
+
 
 
 	 while(1){
@@ -66,22 +78,18 @@ int main(void){
 		uint32_t position_y_adc = ADC_Control_Read(1); //nie trzeba czyscic bo samo odczytanie czysci
 		button_pressed = ((GPIO_A->idr >> 4) & 0x1);
 
-	//	move_left(position_x_adc);
 		if(position_y_adc > 2500 || position_y_adc < 1500){
-			uint32_t oldy0 = pos_y0;
-			uint32_t oldy1 = pos_y1;
-			if(position_y_adc > 2500){
-			move_right(position_y_adc);
-			SPI_Draw(5, 25, oldy0, oldy1, 0x0000);
-			SPI_Draw(5 ,25 , pos_y0, pos_y1, 0xF800 );
-			}else{
-			move_left(position_y_adc);
-			SPI_Draw(5, 25, oldy0 , oldy1, 0x0000);
-			SPI_Draw(5 ,25 , pos_y0, pos_y1, 0xF800 );
+			object_draw(&Object, 0x0000);
+			move(position_y_adc, &Object);
+			object_draw(&Object, 0x07E0);
 			}
-		}
 
 		delay_ms(20);
+}
+
+
+
+
 
 
 
@@ -92,7 +100,7 @@ int main(void){
 
 
 
-	printf("pozycja z jpysticka: %ld %ld %d \n", position_x_adc, position_y_adc, button_pressed);
+	//printf("pozycja z jpysticka: %ld %ld %d \n", position_x_adc, position_y_adc, button_pressed);
 	//delay_ms(500);
 
 	//	for(volatile int i = 0; i < 500000; i++);
@@ -100,7 +108,7 @@ int main(void){
 	 }
 
 
-}
+
 
 
 
