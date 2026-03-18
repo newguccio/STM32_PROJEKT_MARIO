@@ -42,6 +42,8 @@ void move_right(uint32_t move);
 uint16_t pos_y0 =10;
 uint16_t pos_y1 =20;
 uint8_t button_pressed;
+uint8_t gravity = 1;
+
 
 int main(void){
 
@@ -58,6 +60,7 @@ int main(void){
 
 		SPI_Draw(5 ,25 , pos_y0, pos_y1, 0xF800);
 
+
 	 while(1){
 		uint32_t position_x_adc = ADC_Control_Read(0); //nie trzeba czyscic bo samo odczytanie czysci
 		uint32_t position_y_adc = ADC_Control_Read(1); //nie trzeba czyscic bo samo odczytanie czysci
@@ -65,19 +68,20 @@ int main(void){
 
 	//	move_left(position_x_adc);
 		if(position_y_adc > 2500 || position_y_adc < 1500){
-
+			uint32_t oldy0 = pos_y0;
+			uint32_t oldy1 = pos_y1;
 			if(position_y_adc > 2500){
 			move_right(position_y_adc);
-			SPI_Draw(5, 25, (pos_y0 -2), (pos_y1 -2), 0x0000);
+			SPI_Draw(5, 25, oldy0, oldy1, 0x0000);
 			SPI_Draw(5 ,25 , pos_y0, pos_y1, 0xF800 );
 			}else{
 			move_left(position_y_adc);
-			SPI_Draw(5, 25, pos_y0 +2, pos_y1 +2, 0x0000);
+			SPI_Draw(5, 25, oldy0 , oldy1, 0x0000);
 			SPI_Draw(5 ,25 , pos_y0, pos_y1, 0xF800 );
 			}
 		}
 
-
+		delay_ms(20);
 
 
 
