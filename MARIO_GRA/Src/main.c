@@ -20,6 +20,7 @@
 #include  <stdio.h>
 #include "GPIO_driver_API.h"
 #include "SPI_Driver_API.h"
+#include "object_structure.h"
 
 void ADC_ON(void);
 uint32_t ADC_Control_Read(uint32_t channel);
@@ -35,16 +36,23 @@ void SPI_Set_Cursor(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);
 void screen_hardware_reset(void);
 void screen_enable_sequence(void);
 
-void move_jump(uint16_t button);
-void move_left(uint32_t move);
-void move_right(uint32_t move);
+void move_jump(uint8_t button, object *pObject);
+void move(uint32_t move, object *pObject);
 
-uint16_t pos_y0 =10;
-uint16_t pos_y1 =20;
-uint8_t button_pressed;
+volatile uint8_t button_pressed;
+uint8_t gravity = 1;
+
 
 int main(void){
+	uint16_t pos_y0 =10;
+	uint16_t pos_y1 =20;
 
+	uint16_t pos_x0 =0;
+	uint16_t pos_x1	=20;
+
+	uint8_t jump_debounce= 0;
+
+	uint8_t on_something = 1; // jest na czyms == jest na ziemi == jest na murku
 
  		joystickInit();//funkcja zrobiona na API
 
@@ -54,28 +62,55 @@ int main(void){
 
 		screen_enable_sequence();
 
-		SPI_Draw(0, 127, 0, 159, 0x0000);
+		SPI_Draw(0, 129, 0, 160, 0x0000);
 
-		SPI_Draw(5 ,25 , pos_y0, pos_y1, 0xF800);
+
+		object player, stair;
+
+		player.pos_x0 = pos_x0;
+		player.pos_x1 = pos_x1;
+		player.pos_y0 = pos_y0;
+		player.pos_y1 = pos_y1;
+
+		stair.pos_x0 = 30;
+		stair.pos_x1 = 40;
+		stair.pos_y0 = 120;
+		stair.pos_y1 = 150;
+
+		object_draw(&stair, color_red);
+		object_draw(&player, color_green);
+
 
 	 while(1){
-		uint32_t position_x_adc = ADC_Control_Read(0); //nie trzeba czyscic bo samo odczytanie czysci
+		//uint32_t position_x_adc = ADC_Control_Read(0); //nie trzeba czyscic bo samo odczytanie czysci
 		uint32_t position_y_adc = ADC_Control_Read(1); //nie trzeba czyscic bo samo odczytanie czysci
 		button_pressed = ((GPIO_A->idr >> 4) & 0x1);
 
-	//	move_left(position_x_adc);
-		if(position_y_adc > 2500 || position_y_adc < 1500){
-
-			if(position_y_adc > 2500){
-			move_right(position_y_adc);
-			SPI_Draw(5, 25, (pos_y0 -2), (pos_y1 -2), 0x0000);
-			SPI_Draw(5 ,25 , pos_y0, pos_y1, 0xF800 );
-			}else{
-			move_left(position_y_adc);
-			SPI_Draw(5, 25, pos_y0 +2, pos_y1 +2, 0x0000);
-			SPI_Draw(5 ,25 , pos_y0, pos_y1, 0xF800 );
-			}
+		if(player.pos_x0 != 0 || !on_something){
+		object_draw(&player, color_black);
+		player.pos_x0 += player.speed;
+		player.pos_x1 += player.speed;
+		if(player.pos_x0 == 0 && !on_something){
+			on_something = 1; // jest na ziemii
+					}
 		}
+		if(!button_pressed && !jump_debounce && on_something){
+			object_draw(&player, color_black);
+			move_jump(button_pressed, &player);
+			jump_debounce =15;
+			on_something = 0; // jest w powietrzu
+		}
+		if(position_y_adc > 2500 || position_y_adc < 1500){
+			object_draw(&player, color_black);
+			move(position_y_adc, &player);
+			}
+			object_draw(&player, color_green);
+			delay_ms(40);
+
+			//printf("pozycja z jpysticka: %ld %ld %d \n", position_x_adc, position_y_adc, button_pressed);
+			 if(jump_debounce>0 && button_pressed){
+				 jump_debounce--;
+			 }
 
 
 
@@ -84,21 +119,12 @@ int main(void){
 
 
 
-	//	button_pressed = JoyBtn.
 
 
 
-	printf("pozycja z jpysticka: %ld %ld %d \n", position_x_adc, position_y_adc, button_pressed);
-	//delay_ms(500);
-
-	//	for(volatile int i = 0; i < 500000; i++);
-
-	 }
-
+	 }// }while(1)
 
 }
-
-
 
 
 
